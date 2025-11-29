@@ -19,7 +19,7 @@ O foco principal é performance, consistência, cache e segurança.
 
 - PyJWT — Manipulação de tokens
 
-- Keycloak — Autenticação e autorização
+- Keycloak — Autenticação e autorização         
 
 - Poetry — Gerenciamento de dependências
 
@@ -327,4 +327,7 @@ password: password
 Um tutorial rápido para adicionar usuário: https://learnitweb.com/spring-security/creating-new-realm-and-new-user-in-keycloak/
 
 ---
-Em caso de dúvidas, estou disponível em elsonjuniog@mail.com a qualquer momento.
+Em caso de dúvidas, estou a disposição. 
+
+Elson Silva
+elsonjuniog@mail.com
