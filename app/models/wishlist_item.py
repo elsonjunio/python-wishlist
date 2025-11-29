@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Index
+from sqlalchemy import Column, ForeignKey, Index, String
 from app.core.database import Base
 from app.models.control_column import TimestampMixin, SoftDeleteMixin
 from sqlalchemy.orm import Mapped, mapped_column
@@ -20,7 +20,7 @@ class WishlistItem(Base, TimestampMixin, SoftDeleteMixin):
         nullable=False,
     )
 
-    product_id = Column(UUID(as_uuid=True), nullable=False)
+    product_id = Column(String, nullable=False)
 
     deleted_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True

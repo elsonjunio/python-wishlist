@@ -5,9 +5,23 @@ from fastapi import APIRouter, Depends, Security
 from app.core.config import settings
 from app.core.auth_validation import require_user, require_role
 
-from app.routers.customer import router as customer_router
+from app.routers.customer_router import router as customer_router
+from app.routers.wishlist_router import router as wishlist_router
+from app.core.seeder import create_products_cache
+from contextlib import asynccontextmanager
+from app.core.logging_config import setup_logger
+import logging
 
-app = FastAPI()
+setup_logger("DEBUG")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await create_products_cache()
+    yield
+    logging.info("shutdown")
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 def custom_openapi():
@@ -48,13 +62,5 @@ app.openapi = custom_openapi
 
 app.add_middleware(CurrentUserMiddleware)
 app.include_router(customer_router)
+app.include_router(wishlist_router)
 
-
-@app.get('/me')
-def me(user=Depends(require_user)):
-    return user
-
-
-@app.get('/admin')
-def admin_only(user=Depends(require_role('admin'))):
-    return {'message': 'Acesso permitido', 'user': user}

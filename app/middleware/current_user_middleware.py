@@ -3,15 +3,39 @@ import jwt
 from jwt.algorithms import RSAAlgorithm
 import requests
 from app.core.config import settings
+import time
 
 
 class CurrentUserMiddleware:
+    """Middleware for extracting and validating the authenticated user."""
     def __init__(self, app):
         self.app = app
-        self.jwks = requests.get(settings.JWKS_URI).json()
+
+        for _ in range(30):
+            try:
+                self.jwks = requests.get(settings.JWKS_URI).json()
+                print("Keycloak started!")
+                break
+            except Exception:
+                pass
+            
+            print("Waiting for Keycloak...")
+            time.sleep(2)        
 
     @staticmethod
     def get_key(token, jwks):
+        """Retrieves the RSA public key for the provided JWT.
+
+        Args:
+            token: The raw JWT string.
+            jwks: The JWKS document containing public keys.
+
+        Returns:
+            RSA public key object.
+
+        Raises:
+            HTTPException: If no matching key ID is found.
+        """
         unverified_header = jwt.get_unverified_header(token)
         kid = unverified_header['kid']
 
@@ -28,6 +52,11 @@ class CurrentUserMiddleware:
         return RSAAlgorithm.from_jwk(key)
 
     async def __call__(self, scope, receive, send):
+        """Processes incoming requests and resolves the authenticated user."""
+
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+
         request = Request(scope)
         auth = request.headers.get('Authorization')
 

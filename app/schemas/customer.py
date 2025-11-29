@@ -19,3 +19,7 @@ class CustomerOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class CustomerDelete(BaseModel):
+    detail: str

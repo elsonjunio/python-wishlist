@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     AUTHORIZATION_URL: str = ''
     TOKEN_URL: str = ''
     JWKS_URI: str = ''
+    REDIS_HOST: str = ''
+    REDIS_PORT: int = 0
+    LOGLEVE: str = 'INFO'
 
     class Config:
         env_file = '.env'
