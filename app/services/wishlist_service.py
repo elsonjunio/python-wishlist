@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 class WishlistService:
     @staticmethod
-    async def list_items(session, customer_id, user, limit, offset):
+    async def list_items(session, customer_id, current_user, limit, offset):
         """Returns the customer's wishlist.
 
         Args:
@@ -15,7 +15,7 @@ class WishlistService:
             limit: Maximum number of items to return.
             offset: Pagination offset.
             session: Database session.
-            user: Authenticated user.
+            current_user: Authenticated user.
 
         Returns:
             Paginated list of wishlist items.
@@ -30,7 +30,7 @@ class WishlistService:
             raise HTTPException(400, 'Customer does not exist')
 
         # ACL
-        if 'CUSTOMER' in user['roles'] and user['email'] != customer.email:
+        if 'CUSTOMER' in current_user['roles'] and current_user['email'] != customer.email:
             raise HTTPException(
                 403, 'Customers can only access their own list'
             )
@@ -79,14 +79,14 @@ class WishlistService:
         }
 
     @staticmethod
-    async def add_product(session, customer_id, product_id, user):
+    async def add_product(session, customer_id, product_id, current_user):
         """Adds a product to the wishlist.
 
         Args:
             product_id: Product identifier.
             customer_id: ID of the customer.
             session: Database session.
-            user: Authenticated user.
+            current_user: Authenticated user.
 
         Returns:
             Created wishlist item.
@@ -100,7 +100,7 @@ class WishlistService:
         if not customer:
             raise HTTPException(400, 'Customer does not exist')
 
-        if 'CUSTOMER' in user['roles'] and user['email'] != customer.email:
+        if 'CUSTOMER' in current_user['roles'] and current_user['email'] != customer.email:
             raise HTTPException(
                 403, 'Customers can only modify their own list'
             )
@@ -128,14 +128,14 @@ class WishlistService:
         return {'product_id': product_id, 'added': True}
 
     @staticmethod
-    async def soft_delete(session, customer_id, product_id, user):
+    async def soft_delete(session, customer_id, product_id, current_user):
         """Removes a product from the wishlist.
 
         Args:
             customer_id: ID of the customer.
             product_id: ID of the product.
             session: Database session.
-            user: Authenticated user.
+            current_user: Authenticated user.
 
         Returns: None
         """
@@ -148,7 +148,7 @@ class WishlistService:
         if not customer:
             raise HTTPException(400, 'Customer does not exist')
 
-        if 'CUSTOMER' in user['roles'] and user['email'] != customer.email:
+        if 'CUSTOMER' in current_user['roles'] and current_user['email'] != customer.email:
             raise HTTPException(
                 403, 'Customers can only modify their own list'
             )
